@@ -4,22 +4,13 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const User = use('App/Models/Incident');
+const customError = require('../../Utils/errorHandler');
+
 /**
  * Resourceful controller for interacting with incidents
  */
 class IncidentController {
-  /**
-   * Show a list of all incidents.
-   * GET incidents
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
-  }
-
   /**
    * Create/save a new incident.
    * POST incidents
@@ -29,18 +20,11 @@ class IncidentController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
-  }
-
-  /**
-   * Display a single incident.
-   * GET incidents/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+    try {
+      throw Error('incidents');
+    } catch (error) {
+      customError(response);
+    }
   }
 
   /**
