@@ -13,11 +13,12 @@ class IncidentSchema extends Schema {
       table
         .enu('status', ['draft', 'under investigation', 'resolved', 'rejected'])
         .notNullable()
+        .defaultTo('draft')
       table.decimal('latitude', [10], [8]).notNullable()
       table.decimal('longitude', [11], [8]).notNullable()
       table.integer('userId').unsigned()
       table.foreign('userId').references('users.id')
-    })
+    });
   }
 
   down () {

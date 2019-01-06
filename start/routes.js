@@ -14,6 +14,18 @@
 */
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
-const Route = use('Route')
+const Route = use('Route');
+const baseUrl = '/api/v1';
 
-Route.on('/').render('welcome')
+Route.get(baseUrl, () => 'Welcome to ireporter API');
+Route.get('/', () => 'Welcome to ireporter API');
+
+// Users
+Route
+    .post(`${baseUrl}/register`, 'UserController.createUser')
+    .middleware(['userDataValidator']);
+
+// Incidents
+Route
+    .post(`${baseUrl}/incidents`, 'IncidentController.store')
+    .middleware(['incidentValidator'])
