@@ -14,8 +14,10 @@ class UserSchema extends Schema {
     })
 
     this.alter('users', (table) => {
-        table.string('firstName', 80).notNullable()
-        table.string('lastName', 80).notNullable()
+        table.string('firstName', 80)
+            // .notNullable()
+        table.string('lastName', 80)
+            // .notNullable()
         table
           .string('profileImage')
           .notNullable()
