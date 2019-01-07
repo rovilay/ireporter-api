@@ -23,7 +23,13 @@ Route.get('/', () => 'Welcome to ireporter API');
 // Users
 Route
     .post(`${baseUrl}/register`, 'UserController.createUser')
-    .middleware(['userDataValidator']);
+    .middleware(['userDataValidator'])
+    .validator('validateUserWithDB');
+
+Route
+    .post(`${baseUrl}/login`, 'UserController.loginUser')
+    .middleware('guest')
+
 
 // Incidents
 Route

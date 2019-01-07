@@ -7,7 +7,7 @@ class CustomException extends LogicalException {
    * Handle this exception by itself
    */
   handle (error, { response }) {
-    console.log('error ====', error);
+    ('error ====', error);
     response.status(500).send('some errors')
   }
 }

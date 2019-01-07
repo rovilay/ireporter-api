@@ -15,38 +15,40 @@ class IncidentValidator {
   async handle ({ request, response }, next) {
     try {
       const {
-        description, type: incidentType, latitude,
+        comment, type: incidentType, latitude,
         images, videos, longitude
       } = request.body;
       
       let errors = {};
-      const checkDescription = IncidentValidator.validateDescription(description);
+      const checkComment = IncidentValidator.validateComment(comment);
       const checkIncidentType = IncidentValidator.validateIncidentType(incidentType);
       const checkImages = urlValidator(images);
       const checkVideos = urlValidator(videos);
       const checkLocation = IncidentValidator.validateCoordinates(latitude, longitude);
   
       errors = {
-        ...checkDescription, ...checkIncidentType,
+        ...checkComment, ...checkIncidentType,
         images: checkImages, videos: checkVideos, ...checkLocation
       };
       const errorsLength = Object.keys(errors).length;
-      if (errorsLength) return errorHandler(response, 'ValidationError', 400, errors);
+      if (errorsLength) return errorHandler(
+        response, null, errors, 'ValidationError', 400
+      );
       await next();
     } catch (error) {
       return errorHandler(response);
     }
   }
 
-  static validateDescription(description) {
+  static validateComment(comment) {
     const errors = {};
     let err;
 
-    if (!description) {
-      err = 'description is required!';
+    if (!Comment) {
+      err = 'comment is required!';
     }
 
-    if (err) errors.description = err;
+    if (err) errors.comment = err;
 
     return errors;
   }

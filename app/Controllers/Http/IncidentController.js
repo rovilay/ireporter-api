@@ -23,7 +23,7 @@ class IncidentController {
     try {
       throw Error('incidents');
     } catch (error) {
-      customError(response);
+      customError(response, error);
     }
   }
 
