@@ -14,7 +14,7 @@ const urlValidator = (url=[], checkEmpty=false) => {
                 };
             }
         });
-    } else if (!url || (!url.length && checkEmpty)){
+    } else if ((!url || !url.length ) && checkEmpty){
         err = 'url is required!';
     }
 

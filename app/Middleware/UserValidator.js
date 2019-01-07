@@ -21,13 +21,17 @@ class UserValidator {
       const checkNames = UserValidator.validateNames(firstName, lastName);
       const checkPassword = UserValidator.validatePassword(password);
       const checkUrl = urlValidator(profileImage);
+      const urlError = checkUrl ?
+        { profileImage:  checkUrl } : {};
   
-      errors = { ...checkEmail, ...checkNames, ...checkPassword, profileImage: checkUrl };
+      errors = { ...checkEmail, ...checkNames, ...checkPassword, ...urlError };
       const errorsLength = Object.keys(errors).length;
-      if (errorsLength) return errorHandler(response, 'ValidationError', 400, errors);
+      ('====', errors)
+      if (errorsLength) return errorHandler(
+        response, null, errors, 'ValidationError', 400
+      );
       await next();
     } catch (error) {
-      console.log(error);
       return errorHandler(response);
     }
   }

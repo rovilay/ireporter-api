@@ -37,7 +37,13 @@ class User extends Model {
 
   incidents() {
     return this.hasMany('App/Models/Incident')
-}
+  }
+
+  setProfileImage(profileImage) {
+    ('the profile image', profileImage);
+    const defaultImage = 'https://res.cloudinary.com/rovilay/image/upload/v1546762436/profile-image-placeholder.png';
+    return profileImage ? profileImage : defaultImage;
+  }
 }
 
 module.exports = User
