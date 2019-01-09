@@ -28,10 +28,25 @@ Route
 
 Route
     .post(`${baseUrl}/login`, 'UserController.loginUser')
-    .middleware('guest')
+    .middleware('guest');
 
 
 // Incidents
 Route
     .post(`${baseUrl}/incidents`, 'IncidentController.store')
-    .middleware(['incidentValidator'])
+    .middleware(['auth', 'incidentValidator']);
+
+// Incident's media
+Route
+    .post(`${baseUrl}/incidents/:incidentId/media`, 'MediaController.store')
+    .middleware(['auth', 'verifyIncidentUser', 'mediaValidator'])
+
+
+// Non-existing routes
+Route
+    .any('*', ({ response }) => {
+        return response.status(404).json({
+            success: false,
+            message: 'this route does not exist!'
+        });
+    })

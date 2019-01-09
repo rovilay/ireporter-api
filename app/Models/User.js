@@ -32,15 +32,14 @@ class User extends Model {
    * @return {Object}
    */
   tokens () {
-    return this.hasMany('App/Models/Token')
+    return this.hasMany('App/Models/Token');
   }
 
   incidents() {
-    return this.hasMany('App/Models/Incident')
+    return this.hasMany('App/Models/Incident', 'id', 'userId');
   }
 
   setProfileImage(profileImage) {
-    ('the profile image', profileImage);
     const defaultImage = 'https://res.cloudinary.com/rovilay/image/upload/v1546762436/profile-image-placeholder.png';
     return profileImage ? profileImage : defaultImage;
   }
