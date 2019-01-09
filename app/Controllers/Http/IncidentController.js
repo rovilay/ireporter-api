@@ -92,6 +92,11 @@ class IncidentController {
       const { comment, type, longitude, latitude, images, videos } = request.body
 
       const incident = await Incident.findOrFail(incidentId);
+      if (['under investigation', 'resolved', 'rejected'].includes(incident.status)) {
+        const msg = 'you cannot update this incident anymore';
+        return customError(response, null, null, msg, 403);
+      }
+
       incident.merge({ comment, type, longitude, latitude });
       const updatedIncident = await incident.save();
 
@@ -132,9 +137,14 @@ class IncidentController {
   async destroy({ params, response }) {
     try {
       const { incidentId } = params;
+      const incident = await Incident.findOrFail(incidentId);
+
+      if (['under investigation', 'resolved', 'rejected'].includes(incident.status)) {
+        const msg = 'you cannot delete this incident anymore';
+        return customError(response, null, null, msg, 403);
+      }
 
       await Media.query().where({ incidentId }).delete();
-      const incident = await Incident.findOrFail(incidentId);
       await incident.delete();
 
       return response.status(200).json({

@@ -30,6 +30,10 @@ Route
     .post(`${baseUrl}/login`, 'UserController.loginUser')
     .middleware('guest');
 
+Route
+    .patch(`${baseUrl}/users/role`, 'UserController.updateUserRole')
+    .middleware(['auth', 'allowAccess:super admin']);
+
 
 // Incidents
 Route
