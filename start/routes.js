@@ -1,19 +1,5 @@
 'use strict'
 
-/*
-|--------------------------------------------------------------------------
-| Routes
-|--------------------------------------------------------------------------
-|
-| Http routes are entry points to your web application. You can create
-| routes for different URL's and bind Controller actions to them.
-|
-| A complete guide on routing is available here.
-| http://adonisjs.com/docs/4.1/routing
-|
-*/
-
-/** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route');
 const baseUrl = '/api/v1';
 
@@ -30,6 +16,7 @@ Route
     .post(`${baseUrl}/login`, 'UserController.loginUser')
     .middleware('guest');
 
+// User role
 Route
     .patch(`${baseUrl}/users/role`, 'UserController.updateUserRole')
     .middleware(['auth', 'allowAccess:super admin']);
@@ -68,6 +55,11 @@ Route
 Route
     .delete(`${baseUrl}/incidents/:incidentId/media/:mediaId`, 'MediaController.deleteIncidentMedia')
     .middleware(['auth', 'verifyIncidentUser']);
+
+// Incident status
+Route
+    .patch(`${baseUrl}/incidents/:incidentId/status`, 'IncidentController.updateIncidentStatus')
+    .middleware(['auth', 'allowAccess:super admin,admin', 'verifyIncidentUser:allowAdmin']);
 
 
 // Non-existing routes

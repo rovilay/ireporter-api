@@ -30,7 +30,7 @@ class IncidentController {
         images, videos, longitude
       } = request.body;
       const newIncident = await Incident.create({ 
-        comment, type, latitude, longitude, status, userId
+        comment, type: type.toLowerCase(),  latitude, longitude, status, userId
       });
       if (newIncident) {
         const modifiedImages = modifyMedia(images, 'image', newIncident.id);
@@ -153,6 +153,30 @@ class IncidentController {
       });
     } catch (error) {
       customError(response, error);
+    }
+  }
+
+  async updateIncidentStatus({ params, response, request }) {
+    try {
+      let { status } = request.body;
+      status = status ? status.toLowerCase() : '';
+      const { incidentId } = params;
+      const validStatus = ['draft', 'under investigation', 'rejected', 'resolved'];
+      if (!validStatus.includes(status)) {
+        const msg = "Status can either be 'draft', 'under investigation', 'rejected',  or 'resolved'";
+        return customError(response, null, null, msg, 400);
+      }
+
+      const incident = await Incident.findOrFail(incidentId);
+      await incident.merge({ status });
+      await incident.save();
+      return response.status(200).json({
+        success: true,
+        message: 'incident status updated successfully',
+        incident
+      });
+    } catch (error) {
+      customError(response, error);      
     }
   }
 
