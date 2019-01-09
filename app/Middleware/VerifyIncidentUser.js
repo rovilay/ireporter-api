@@ -14,7 +14,7 @@ class VerifyIncidentUser {
 
             if (!Number.isInteger(Number(incidentId))) {
                 const msg = 'incident id must be an integer';
-                return errorHandler(response, null, null, msg, 403);
+                return errorHandler(response, null, null, msg, 400);
             }
 
             const incident = await Incident.findOrFail(incidentId);
@@ -28,7 +28,7 @@ class VerifyIncidentUser {
                 return await next();
             }
 
-            const msg = 'you are not authroized to perform this operation';
+            const msg = 'you are not authroized to perform operations on this resource';
             return errorHandler(response, null, null, msg, 403);
 
         } catch (error) {
