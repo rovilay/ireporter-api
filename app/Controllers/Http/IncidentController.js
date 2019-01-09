@@ -6,6 +6,7 @@
 
 const Incident = use('App/Models/Incident');
 const Media = use('App/Models/Media');
+const Database = use('Database');
 const customError = require('../../Utils/errorHandler');
 const modifyMedia = require('../../Utils/mediaModifier');
 
@@ -45,7 +46,43 @@ class IncidentController {
         media: mediaUrl,
       });
     } catch (error) {
-      console.log('i am in incident controller ', error);
+      customError(response, error);
+    }
+  }
+
+  async getAllIncidents({ request, response, auth }) {
+    try {
+      const { id: userId } = auth.user;
+      const personal = request.input('personal');
+      const type = request.input('type');
+      let where = personal === 'true' ? { userId } : {};
+      where = type ? { ...where, type } : where;
+      
+
+      let incidents = await Database.from('incidents').where(where);
+      incidents = this.generateMediaUrl(incidents);
+
+      return response.status(200).json({
+        success: true,
+        message: 'incidents fetched successfully',
+        incidents
+      });
+    } catch (error) {
+      customError(response, error);
+    }
+  }
+
+  async getIncidentById({ params, request, response }) {
+    try {
+      const { incidentId } = params;
+      let incident = await Incident.findOrFail(incidentId);
+      const mediaUrl = `api/v1/incidents/${incident.id}/media`
+      return response.status(200).json({
+        success: true,
+        message: 'incident fetched successfully',
+        incident: { ...incident.$attributes, mediaUrl}
+      });
+    } catch (error) {
       customError(response, error);
     }
   }
@@ -83,6 +120,14 @@ class IncidentController {
   //   }
   //   return [];
   // }
+  generateMediaUrl(incidients) {
+    const incidentsWithMediaUrl = incidients.map(incident => {
+      const mediaUrl = `/api/v1/incidents/${incident.id}/media`;
+      return { ...incident, mediaUrl };
+    });
+
+    return incidentsWithMediaUrl;
+  }
 }
 
 module.exports = IncidentController

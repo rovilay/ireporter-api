@@ -31,7 +31,7 @@ const getErrorMessage = (error, status=500) => {
                 break;
             case 'ModelNotFoundException':
                 errorStatus = 404;
-                errorMessage = 'resource was not found';
+                errorMessage = 'resource does not exist';
                 break;
             default:
                 errorStatus = status;

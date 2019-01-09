@@ -36,6 +36,14 @@ Route
     .post(`${baseUrl}/incidents`, 'IncidentController.store')
     .middleware(['auth', 'incidentValidator']);
 
+Route
+    .get(`${baseUrl}/incidents`, 'IncidentController.getAllIncidents')
+    .middleware(['auth', 'verifyIncidentQuery']);
+
+Route
+    .get(`${baseUrl}/incidents/:incidentId`, 'IncidentController.getIncidentById')
+    .middleware(['auth'], 'verifyIncidentUser:allowAll');
+
 // Incident's media
 Route
     .post(`${baseUrl}/incidents/:incidentId/media`, 'MediaController.store')
