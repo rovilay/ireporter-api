@@ -45,6 +45,7 @@ const namedMiddleware = {
   mediaValidator: 'App/Middleware/MediaValidator',
   allowAccess: 'App/Middleware/CheckAccess',
   verifyIncidentUser: 'App/Middleware/VerifyIncidentUser',
+  verifyIncidentQuery: 'App/Middleware/VerifyIncidentQuery',
 }
 
 /*

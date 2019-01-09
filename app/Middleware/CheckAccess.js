@@ -14,14 +14,12 @@ class AllowAccess {
   async handle ({ response, auth }, next, properties) {
     try {
         const { role } = auth.user;
-        console.log(auth)
         if (!properties.length || properties.includes(role)) {
             return await next();
         }
         const msg = 'you are not authroized to perform this operation';
         return errorHandler(response, null, null, msg, 403);
     } catch (error) {
-        console.log(error);
         return errorHandler(response, error);
     }
   }

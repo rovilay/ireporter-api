@@ -85,7 +85,6 @@ class UserValidator {
   }
 
   static async checkAccess({ request, response, auth }, next) {
-    console.log('====access=== ', auth.role);
     await next();
   }
 }
