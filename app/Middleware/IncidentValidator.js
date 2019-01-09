@@ -25,10 +25,12 @@ class IncidentValidator {
       const checkImages = urlValidator(images);
       const checkVideos = urlValidator(videos);
       const checkLocation = IncidentValidator.validateCoordinates(latitude, longitude);
-  
+      const urlImageError = checkImages ? { image:  checkImages } : {};
+      const urlVideosError = checkVideos ? { videos:  checkVideos } : {};
+
       errors = {
         ...checkComment, ...checkIncidentType,
-        images: checkImages, videos: checkVideos, ...checkLocation
+        ...urlImageError, ...urlVideosError, ...checkLocation
       };
       const errorsLength = Object.keys(errors).length;
       if (errorsLength) return errorHandler(
@@ -44,7 +46,7 @@ class IncidentValidator {
     const errors = {};
     let err;
 
-    if (!Comment) {
+    if (!comment) {
       err = 'comment is required!';
     }
 
@@ -61,8 +63,8 @@ class IncidentValidator {
         !['red-flag', 'intervention'].includes(incidentType.toString().toLowerCase())
       ) {
       err = "incident type must either be 'red-flag' or 'intervention'";
-    } else {
-      err = 'IncidentType is required!';
+    } else if(!incidentType) {
+      err = 'incident type is required!';
     }
 
     if (err) errors.type = err;

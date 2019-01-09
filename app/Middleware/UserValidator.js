@@ -26,7 +26,6 @@ class UserValidator {
   
       errors = { ...checkEmail, ...checkNames, ...checkPassword, ...urlError };
       const errorsLength = Object.keys(errors).length;
-      ('====', errors)
       if (errorsLength) return errorHandler(
         response, null, errors, 'ValidationError', 400
       );
@@ -79,6 +78,15 @@ class UserValidator {
 
     if (err) errors.password = err;
     return errors;
+  }
+
+  static allowAccess(usersAllowed) {
+    const roles = ['user', 'admin', 'super admin'];
+  }
+
+  static async checkAccess({ request, response, auth }, next) {
+    console.log('====access=== ', auth.role);
+    await next();
   }
 }
 

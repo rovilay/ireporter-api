@@ -1,5 +1,5 @@
 const errorHandler = (response, error, errorData=null, message, status) => {
-    const { errorMessage, errorStatus } = getErrorMessage(error);
+    const { errorMessage, errorStatus } = getErrorMessage(error, status);
 
     const msg = errorData ? {
         success: false,
@@ -14,7 +14,7 @@ const errorHandler = (response, error, errorData=null, message, status) => {
     return response.status(status || errorStatus).json(msg);
 };
 
-const getErrorMessage = (error) => {
+const getErrorMessage = (error, status=500) => {
     let errorMessage;
     let errorStatus;
 
@@ -29,9 +29,13 @@ const getErrorMessage = (error) => {
                 errorStatus = 400;
                 errorMessage = error.message;
                 break;
+            case 'ModelNotFoundException':
+                errorStatus = 404;
+                errorMessage = 'resource was not found';
+                break;
             default:
-                errorStatus = 500;
-                errorMessage = 'server error';
+                errorStatus = status;
+                errorMessage = error.message || 'server error';
         }
     } else {
         errorStatus = 500;

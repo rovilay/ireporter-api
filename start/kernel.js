@@ -42,6 +42,9 @@ const namedMiddleware = {
   guest: 'Adonis/Middleware/AllowGuestOnly',
   userDataValidator: 'App/Middleware/UserValidator',
   incidentValidator: 'App/Middleware/IncidentValidator',
+  mediaValidator: 'App/Middleware/MediaValidator',
+  allowAccess: 'App/Middleware/CheckAccess',
+  verifyIncidentUser: 'App/Middleware/VerifyIncidentUser',
 }
 
 /*

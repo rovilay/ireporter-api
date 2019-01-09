@@ -4,89 +4,33 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Incident = use('App/Models/Incident');
+const Media = use('App/Models/Media');
+const customError = require('../../Utils/errorHandler');
+const modifyMedia = require('../../Utils/mediaModifier');
+
 /**
  * Resourceful controller for interacting with media
  */
 class MediaController {
-  /**
-   * Show a list of all media.
-   * GET media
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
-  }
+  async store({ request, response, params }) {
+    try {
+      const { images, videos } = request.body;
+      const { incidentId } = params;
 
-  /**
-   * Render a form to be used for creating a new media.
-   * GET media/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
+      const modifiedImages = modifyMedia(images, 'image', incidentId);
+      const modifiedVidoes = modifyMedia(videos, 'video', incidentId);
+      const newMedia = await Media.createMany([...modifiedImages, ...modifiedVidoes]);
 
-  /**
-   * Create/save a new media.
-   * POST media
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-  }
+      return response.status(201).json({
+        success: true,
+        message: 'media added successfully',
+        newMedia,
+      });
 
-  /**
-   * Display a single media.
-   * GET media/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing media.
-   * GET media/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update media details.
-   * PUT or PATCH media/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a media with id.
-   * DELETE media/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
+    } catch (error) {
+      customError(response, error);
+    }
   }
 }
 
