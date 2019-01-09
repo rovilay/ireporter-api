@@ -35,8 +35,7 @@ class IncidentController {
       if (newIncident) {
         const modifiedImages = modifyMedia(images, 'image', newIncident.id);
         const modifiedVidoes = modifyMedia(videos, 'video', newIncident.id);
-        await Media
-          .createMany([...modifiedImages, ...modifiedVidoes]);
+        await Media.createMany([...modifiedImages, ...modifiedVidoes]);
         mediaUrl = `/api/v1/incidents/${newIncident.id}/media`;
       }
       return response.status(201).json({
@@ -87,39 +86,66 @@ class IncidentController {
     }
   }
 
-  /**
-   * Update incident details.
-   * PUT or PATCH incidents/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
+  async update ({ params, request, response, auth }) {
+    try {
+      const { incidentId } = params;
+      const { comment, type, longitude, latitude, images, videos } = request.body
+
+      const incident = await Incident.findOrFail(incidentId);
+      incident.merge({ comment, type, longitude, latitude });
+      const updatedIncident = await incident.save();
+
+      if (updatedIncident) {
+        await this.mediaUpdate(images, videos, incidentId);
+      }
+
+      return response.status(200).json({
+        success: true,
+        message: 'incident updated successfully',
+        incident: { ...incident.$attributes, 
+          mediaUrl: `/api/v1/incidents/${incidentId}/media`}
+      });
+    } catch (error) {
+      customError(response, error);
+    }
   }
 
-  /**
-   * Delete a incident with id.
-   * DELETE incidents/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
+  async mediaUpdate(images, videos, incidentId) {
+    try {
+      const modifiedImages = modifyMedia(images, 'image', incidentId);
+      const modifiedVidoes = modifyMedia(videos, 'video', incidentId);
+      if (modifiedImages.length) {
+          await Media.query().where({ incidentId, type: 'image' }).delete();
+      }
+
+      if (modifiedVidoes.length) {
+          await Media.query().where({ incidentId, type: 'video' }).delete();
+      }
+
+      await Media.createMany([...modifiedImages, ...modifiedVidoes]);
+
+    } catch (error) {
+      customError(response, error); 
+    }
   }
 
-  // modifyMedia(mediaUrls, mediaType, incidentId) {
-  //   if (mediaUrls && mediaType && incidentId) {
-  //     const media = typeof mediaUrls === 'string' ? [mediaUrls] : mediaUrls;
-  //     const modifiedMedia = media.map(url => ({ 
-  //       url, incidentId, type: mediaType
-  //     }));
+  async destroy({ params, response }) {
+    try {
+      const { incidentId } = params;
 
-  //     return modifiedMedia;
-  //   }
-  //   return [];
-  // }
+      await Media.query().where({ incidentId }).delete();
+      const incident = await Incident.findOrFail(incidentId);
+      await incident.delete();
+
+      return response.status(200).json({
+        success: true,
+        message: 'incident deleted successfully',
+      });
+    } catch (error) {
+      customError(response, error);
+    }
+  }
+
   generateMediaUrl(incidients) {
     const incidentsWithMediaUrl = incidients.map(incident => {
       const mediaUrl = `/api/v1/incidents/${incident.id}/media`;

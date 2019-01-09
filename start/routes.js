@@ -44,10 +44,26 @@ Route
     .get(`${baseUrl}/incidents/:incidentId`, 'IncidentController.getIncidentById')
     .middleware(['auth'], 'verifyIncidentUser:allowAll');
 
+Route
+    .put(`${baseUrl}/incidents/:incidentId`, 'IncidentController.update')
+    .middleware(['auth', 'verifyIncidentUser', 'incidentValidator']);
+
+Route
+    .delete(`${baseUrl}/incidents/:incidentId`, 'IncidentController.destroy')
+    .middleware(['auth', 'verifyIncidentUser']);
+
 // Incident's media
 Route
     .post(`${baseUrl}/incidents/:incidentId/media`, 'MediaController.store')
-    .middleware(['auth', 'verifyIncidentUser', 'mediaValidator'])
+    .middleware(['auth', 'verifyIncidentUser', 'mediaValidator']);
+
+Route
+    .get(`${baseUrl}/incidents/:incidentId/media`, 'MediaController.getIncidentMedia')
+    .middleware(['auth', 'verifyIncidentUser:allowAll']);
+
+Route
+    .delete(`${baseUrl}/incidents/:incidentId/media/:mediaId`, 'MediaController.deleteIncidentMedia')
+    .middleware(['auth', 'verifyIncidentUser']);
 
 
 // Non-existing routes

@@ -6,6 +6,7 @@
 
 const Incident = use('App/Models/Incident');
 const Media = use('App/Models/Media');
+const Database = use('Database');
 const customError = require('../../Utils/errorHandler');
 const modifyMedia = require('../../Utils/mediaModifier');
 
@@ -28,6 +29,41 @@ class MediaController {
         newMedia,
       });
 
+    } catch (error) {
+      customError(response, error);
+    }
+  }
+
+  async getIncidentMedia({ response, params }) {
+    try {
+      const { incidentId } = params;
+      let media = await Database.from('media').where({ incidentId });
+
+  
+      return response.status(200).json({
+        success: true,
+        message: 'media retrieved successfully',
+        media,
+      });
+    } catch (error) {
+      customError(response, error);
+    }
+  }
+
+  async deleteIncidentMedia({ response, params }) {
+    try {
+      const { incidentId, mediaId } = params;
+
+      if (!Number.isInteger(Number(mediaId))) {
+        const msg = 'media id must be an integer';
+        return customError(response, null, null, msg, 400);
+      }
+      const media = await Media.findOrFail(mediaId);
+      await media.delete();
+      return response.status(200).json({
+        success: true,
+        message: 'incident Media deleted successfully',
+      });
     } catch (error) {
       customError(response, error);
     }
